@@ -25,10 +25,10 @@ WITH sub_details AS (
 			WHEN platform = 'liocinema' AND subscription_plan = 'Premium' THEN 129
 			ELSE 0
 		END AS subscription_price,
-        CASE 
+        	CASE 
 			WHEN platform = 'jotstar' AND subscription_plan IN ('VIP', 'Premium') THEN 'paid'
-            WHEN platform = 'liocinema' AND subscription_plan IN ('Basic', 'Premium') THEN 'paid'
-            ELSE 'free'
+            		WHEN platform = 'liocinema' AND subscription_plan IN ('Basic', 'Premium') THEN 'paid'
+            		ELSE 'free'
 		END AS subscription_type
 	FROM (
 		SELECT *, 'jotstar' AS platform
@@ -43,13 +43,11 @@ FROM sub_details sd
 LEFT JOIN (
 	SELECT platform, user_id, ROUND(SUM(total_watch_time_mins)/60, 0) AS total_watch_time_hrs
 		, ROUND(AVG(total_watch_time_mins)/60, 0) AS avg_watch_time_hrs
-    FROM (
+    	FROM (
 		SELECT *, 'jotstar' AS platform
 		FROM jotstar_db.content_consumption
 		UNION ALL
 		SELECT *, 'liocinema' AS platform
 		FROM liocinema_db.content_consumption) b
 	GROUP BY platform, user_id) c
-    ON c.platform = sd.platform
-		AND c.user_id = sd.user_id
-	
+    ON c.platform = sd.platform AND c.user_id = sd.user_id;
